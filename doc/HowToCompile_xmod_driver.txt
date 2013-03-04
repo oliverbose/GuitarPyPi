@@ -1,0 +1,57 @@
+HowTo Compile a Kernel module:
+1. Get kernel sources (apt-get linux-headersXXX gives the wrong version)
+
+cd ~
+mkdir git
+cd git
+git clone https://github.com/raspberrypi/linux.git
+cd linux
+git reset --hard
+
+
+2. Prepare Kernel sources. Then we'll grab the config from the raspberry pi's running kernel, and get the source tree to prepare itself for module builds:
+
+cd raspberrypi-linux-*
+zcat /proc/config.gz > .config
+make oldconfig
+make modules_prepare
+
+What you will also need to build modules that will actually go into the new kernel is Modules.symvers. Luckily, someone has nicely put it in the raspberrypi/firmware github along with the pre-compiled kernel and firmware binaries, so we can just download the latest one from there:
+
+wget https://github.com/raspberrypi/firmware/raw/master/extra/Module.symvers
+
+Then just make symlinks available in /lib/modules/[kernelversion]/ for the stuff you're compiling. Might as well put a symlink in for /usr/src/linux etc as well
+
+KSRC=`pwd`
+pushd /lib/modules/`uname -r`
+ln -s ${KSRC} source
+ln -s ${KSRC} build
+popd
+
+pushd /usr/src
+ln -s ${KSRC} linux-`uname -r`
+ln -s ${KSRC} linux
+popd
+
+3. Copy the driver to some other directory and create a Makefile
+cd ~
+mkdir xpad
+cp /home/pi/git/linux/drivers/input/joystick/xpad.c .
+vi Makefile
+Paste the following lines:
+obj-m = xpad.o
+KVERSION = $(shell uname -r)
+all:
+	make -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
+clean:
+	make -C /lib/modules/$(KVERSION)/build M=$(PWD) clean
+ 
+
+Note: if you encounter a message, that nothing has to be done for tagret all then check tah you have used tabs instead of spaces in you makefile.
+Run make
+
+
+4. Install Module
+sudo mkdir /lib/modules/3.6.11+/kernel/drivers/input/joysytick
+sudo cp xpad.ko /lib/modules/3.6.11+/kernel/drivers/input/joysytick
+sudo insmod xpad.ko
