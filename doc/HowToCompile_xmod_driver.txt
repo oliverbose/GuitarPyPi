@@ -54,4 +54,6 @@ Run make
 4. Install Module
 sudo mkdir /lib/modules/3.6.11+/kernel/drivers/input/joysytick
 sudo cp xpad.ko /lib/modules/3.6.11+/kernel/drivers/input/joysytick
-sudo insmod xpad.ko
+cd /lib/modules/3.6.11+/kernel/drivers/input/joysytick/
+sudo depmod -a
+sudo modprobe xpad
