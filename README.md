@@ -26,8 +26,9 @@ hav feed back when there is no display (not yet implemented).
 
 Configuration (not yet implemented)
 -----------------------------------
-The configuration is done in an XML-file. There is a set of main properties for the app and a set of songsconfigurations
+The configuration is done in an XML-file. There is a set of main properties for the application and a set of song-configurations
 which consist the mapping of the buttons to samples.
+
 The application config has following attributes:
 - JoystickId: The joystick-id of your guitar. In most cases it is 0 for /dev/input/js0
 For the following refer to http://www.pygame.org/docs/ref/mixer.html for detailed information.
@@ -37,13 +38,21 @@ For the following refer to http://www.pygame.org/docs/ref/mixer.html for detaile
 - BufferSize: Number of samples sent to the OS at once. Lower number gives lower latency (the time between you trigger and hear the sound) but can lead to dropouts.
 - ReadySound: a Sample that is played when the system is ready (usefull if you have no display)
 
+A song configration has following attributes:
+- MutedSounds: Samples for Button 0-5
+- OpenSounds: Samples for Button 0-5
+- LoadSound: a Sound that is played when the song is selected
+
+Of cource using open/muted sounds is not a dogma. It can also be used to have more different sounds in a song.
+
+Note: at the moment there is only one hard coded song. 
 
 Installation
 ------------
 - Checkout the repository from github.com to ~/GuitarPyPi
 - make sure you have the guitar connected and your OS recognizes it as a joystick.
 	- ls /dev/input should list you 'js0'
-	- dmesg |grep Guitar should show two lines, one listed as "input"
+	- dmesg |grep Guitar should show two lines, one listed as 'input'
 	- jstest /dev/input/js0 should show you the changes of button states.
 - go to ~/GuitarPyPi/src
 - make sure the GuitarPyPi.py is executable
@@ -58,9 +67,16 @@ For the RedOctane USB-controller youn need
 
 Roadmap
 -------
-Following things have to be done:
-	- Configuration via XML
-	- Enhanced chord change (while the trigger is active) 
-	- Support of bluetooth controllers
-	- create a "headless" raspian installation, that automatically starts GuitarPyPi after boot.
-	- use display connected to GPIO (some day...)
+*Soon:
+- Configuration via XML
+- Enhanced chord change (while the trigger is active) 
+- Support of bluetooth controllers
+- create a "headless" raspian installation, that automatically starts GuitarPyPi after boot.
+
+*Later:
+- Configure a background track for each song for playing along
+- A display connected to the Pi's GPIO
+- Do something to the other buttons/tremolo
+- ...
+
+
