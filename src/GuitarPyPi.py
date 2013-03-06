@@ -2,15 +2,17 @@
 import random, sys, time, math, pygame
 from pygame.locals import *
 
-
+numChordButtons = 5
 
 def main():
     global guitar, chordsOpen, chordsMuted, chordToPlay
-
+    print "Initialization start..."
     # we need to reduce the default buffer size to have low latency
     pygame.mixer.pre_init(44100,-16,1,512)
     pygame.init()
     pygame.joystick.init()
+    pygame.event.set_blocked(JOYAXISMOTION)
+
     guitar = pygame.joystick.Joystick(0)
     guitar.init()
 
@@ -29,55 +31,48 @@ def main():
                  5: pygame.mixer.Sound("../audio/E8-muted.ogg")}
                  
     chordToPlay = 0
-
+    print "Initialization complete"
     while True:
         fist()
 
 
 def fist():
-    global guitar, chordsOpen, chordsMuted, chordToPlay
+    global guitar, chordsOpen, chordsMuted
     
-    int 
-    for event in pygame.event.get(): # event handling loop
-        if event.type == JOYHATMOTION:
-#            print"GotEvent  JOYHATMOTION", event.value
-            if event.value == (0,0):
-                stopAll()
-            elif event.value == (0,-1):
-                chordsOpen[chordToPlay].play(0,0,0)
-            elif event.value == (0,1):
-                chordsMuted[chordToPlay].play(0,0,0)
 
-        elif event.type == JOYBUTTONDOWN:
- #           print("GotEvent  JOYBUTTONDOWN")
-            if event.button == 0:
-                chordToPlay = 1
-            elif event.button == 1:
-                chordToPlay = 2
-            elif event.button == 2:
-                chordToPlay = 4
-            elif event.button == 3:
-                chordToPlay = 3
-            elif event.button == 4:
-                chordToPlay = 5
-        elif event.type == JOYBUTTONUP:
-  #          print("GotEvent  JOYBUTTONUP")
-            if noButtonPresed() :
-                chordToPlay = 0
-
-
-def noButtonPresed():
-    global guitar
-    status =  ( not guitar.get_button(0) \
-            	and not guitar.get_button(1) \
-    		and not guitar.get_button(2) \
-		and not guitar.get_button(3) \
-		and not guitar.get_button(4))
-    return status
+    event = pygame.event.wait()
+    print "GotEvent  " + pygame.event.event_name(event.type)
+    if event.type == JOYHATMOTION:
+        if event.value == (0,0):
+            stopAll()
+        elif event.value == (0,-1):
+            playOpen()
+        elif event.value == (0,1):
+            chordsMuted[chordToPlay].play(0,0,0)
 
 def stopAll():
     pygame.mixer.stop()
 
+def playOpen():
+    global chordsOpen
+    chordsOpen[getActiveChordButton()].play()
+
+def playMuted():
+    global chordsMuted
+    chordsMuted[getActiveChordButton()].play()
+    
+def getActiveChordButton():
+    global guitar
+    buttonId = 0
+    while buttonId < numChordButtons:
+        if (guitar.get_button(buttonId)):
+            if (buttonId == 2):
+                return buttonId + 2
+            if (buttonId == 3):
+                return buttonId
+            return buttonId + 1
+        buttonId = buttonId + 1
+    return 0
 
 if __name__ == '__main__':
     main()
