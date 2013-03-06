@@ -45,7 +45,7 @@ A song configration has following attributes:
 
 Of cource using open/muted sounds is not a dogma. It can also be used to have more different sounds in a song.
 
-Note: at the moment there is only one hard coded song. 
+*Note:* at the moment there is only one hard coded song. 
 
 Installation
 ------------
@@ -67,16 +67,16 @@ For the RedOctane USB-controller youn need
 
 Roadmap
 -------
-*Soon:
+*Soon:*
 - Configuration via XML
 - Enhanced chord change (while the trigger is active) 
 - Support of bluetooth controllers
 - create a "headless" raspian installation, that automatically starts GuitarPyPi after boot.
 
-*Later:
+*Later:*
 - Configure a background track for each song for playing along
 - A display connected to the Pi's GPIO
-- Do something to the other buttons/tremolo
+- Do something with the other buttons/tremolo
 - ...
 
 
