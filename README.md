@@ -15,6 +15,8 @@ How to play
 The five colored buttons on the neck of the guitar are used to select the chord you want to play. 
 Assuming no button pressed is also a state there are six chords.
 
+You can change the chords while holding the trigger or play even all chords simultaneously (except for the no-button-chord of course).
+
 The selected chord is played when the trigger is pulled up or pushed down.
 
 To fulfill the need of different strumming styles (open and muted) the open chords are played when the trigger is pushed down
@@ -54,6 +56,7 @@ Installation
 	- ls /dev/input should list you 'js0'
 	- dmesg |grep Guitar should show two lines, one listed as 'input'
 	- jstest /dev/input/js0 should show you the changes of button states.
+	- If not you need to install the xpad-module (driver). For linux 3.6.11+ you find it precompiled in /lib. In the very last part of the "howto compile a kernel module" in /doc you find instructions to install the module.
 - go to ~/GuitarPyPi/src
 - make sure the GuitarPyPi.py is executable
 - run ./GuitarPyPi.py
@@ -69,7 +72,6 @@ Roadmap
 -------
 *Soon:*
 - Configuration via XML
-- Enhanced chord change (while the trigger is active) 
 - Support of bluetooth controllers
 - Create a "headless" raspbian installation, that automatically starts GuitarPyPi after boot.
 
