@@ -6,9 +6,13 @@ numChordButtons = 5
 
 def main():
     global guitar, chordsOpen, chordsMuted, chordToPlay
+
     print "Initialization start..."
-    # we need to reduce the default buffer size to have low latency ~50ms at 300
-    pygame.mixer.pre_init(44100,-16,1,300)
+
+    # We need to reduce the default buffer size to have low latency.
+    # It is highly reccomended to use 22050 Hz as samplerate. Works fine also with 44.1K samples
+    # but allowes a buffersize of 1 instead of 512 which means approx. 10ms instead of 50 ms latency!
+    pygame.mixer.pre_init(22050,-16,1,1)
     pygame.init()
     pygame.joystick.init()
     pygame.event.set_blocked(JOYAXISMOTION)
@@ -39,7 +43,7 @@ def main():
 def fist():
     global guitar, chordsOpen, chordsMuted
     
-
+    # this keeps the application idle until an event is caught
     event = pygame.event.wait()
     #print "GotEvent  " + pygame.event.event_name(event.type)
     if event.type == JOYHATMOTION:

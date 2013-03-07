@@ -8,11 +8,11 @@ This is done in Python (that's the "Py") heavily relying on the pygames library.
 
 The guitar-sounds are stored as OGG files. By default there are 13 powercords (E to E8 in halftones) recorded 
 with a distorted 1988 Fender Stratocaster. Every chord is sampled as open and muted. 
-Feel free to use your own samples in WAV or OGG format.
+Feel free to use your own samples in WAV or OGG format. OGG is the preferred format as it seems to have a slightly lower latency.
 
 How to play
 -----------
-There five colored buttons on the neck of the guitar are used to select the chord you want to play. 
+The five colored buttons on the neck of the guitar are used to select the chord you want to play. 
 Assuming no button pressed is also a state there are six chords.
 
 The selected chord is played when the trigger is pulled up or pushed down.
@@ -21,7 +21,7 @@ To fulfill the need of different strumming styles (open and muted) the open chor
 and the muted when pulled up.
 
 The "back" and "start" buttons will be used to select different songs, a sample is played back wen the song is switched to
-hav feed back when there is no display (not yet implemented).
+have feed back when there is no display (not yet implemented).
 
 
 Configuration (not yet implemented)
@@ -32,7 +32,7 @@ which consist the mapping of the buttons to samples.
 The application config has following attributes:
 - JoystickId: The joystick-id of your guitar. In most cases it is 0 for /dev/input/js0
 For the following refer to http://www.pygame.org/docs/ref/mixer.html for detailed information.
-- SampleRate: The sample rate youre samples are recorded with. (defaults to 44100)
+- SampleRate: The sample rate youre samples are recorded with. (defaults to 22050). It is highly reccomended to use 22050 Hz as samplerate. Works fine also with 44.1K samples but allowes a buffersize of 1 instead of 512. 
 - BitDepth: The bit depth youre samples are recorded with (defaults to -16)
 - Channels: The number of channels in your samples (1 = mono, 2 = stereo)
 - BufferSize: Number of samples sent to the OS at once. Lower number gives lower latency (the time between you trigger and hear the sound) but can lead to dropouts.
@@ -71,7 +71,7 @@ Roadmap
 - Configuration via XML
 - Enhanced chord change (while the trigger is active) 
 - Support of bluetooth controllers
-- create a "headless" raspian installation, that automatically starts GuitarPyPi after boot.
+- Create a "headless" raspbian installation, that automatically starts GuitarPyPi after boot.
 
 *Later:*
 - Configure a background track for each song for playing along
