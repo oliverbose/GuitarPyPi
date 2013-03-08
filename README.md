@@ -4,43 +4,42 @@ GuitarPyPi
 Play real music on your Guitar Hero(R)-controller connected to a RaspberryPi (that's the "Pi")!
 The goal is to use the controller to play a predefined set of chords.
 
-This is done in Python (that's the "Py") heavily relying on the pygames library.
+GuitarPyPi is written in Python (that's the "Py"), heavily relying on the pygames library.
 
-The guitar-sounds are stored as OGG files. By default there are 13 powercords (E to E8 in halftones) recorded 
+The guitar sounds are stored as OGG files. By default there are 13 powercords (E to E8 in halftones) recorded 
 with a distorted 1988 Fender Stratocaster. Every chord is sampled as open and muted. 
 Feel free to use your own samples in WAV or OGG format. OGG is the preferred format as it seems to have a slightly lower latency.
 
 How to play
 -----------
 The five colored buttons on the neck of the guitar are used to select the chord you want to play. 
-Assuming no button pressed is also a state there are six chords.
+Assuming no button pressed is also a state, there are six chords.
 
 The selected chord is played when the trigger is pulled up or pushed down. You can change the chords while holding the trigger or even play all chords simultaneously (except for the no-button-chord of course).
 
 To fulfill the need of different strumming styles (open and muted) the open chords are played when the trigger is pushed down
 and the muted when pulled up.
 
-The "back" and "start" buttons will be used to select different songs, a sample is played back wen the song is switched to
-have feed back when there is no display (not yet implemented).
+The "back" and "start" buttons will be used to select different songs. Because there might be no display connected to your Pi, a sample is played back when the song is switched to know which song is active (not yet implemented).
 
 
 Configuration (not yet implemented)
 -----------------------------------
 The configuration is done in an XML-file. There is a set of main properties for the application and a set of song-configurations
-which consist the mapping of the buttons to samples.
+which contain the mapping of the buttons to samples.
 
 The application config has following attributes:
-- JoystickId: The joystick-id of your guitar. In most cases it is 0 for /dev/input/js0
-For the following refer to http://www.pygame.org/docs/ref/mixer.html for detailed information.
-- SampleRate: The sample rate youre samples are recorded with. (defaults to 22050). It is highly reccomended to use 22050 Hz as samplerate. Works fine also with 44.1K samples but allowes a buffersize of 1 instead of 512. 
-- BitDepth: The bit depth youre samples are recorded with (defaults to -16)
-- Channels: The number of channels in your samples (1 = mono, 2 = stereo)
-- BufferSize: Number of samples sent to the OS at once. Lower number gives lower latency (the time between you trigger and hear the sound) but can lead to dropouts.
+- JoystickId: The joystick id of your guitar. In most cases it is 0 for /dev/input/js0. 
+- For the following refer to http://www.pygame.org/docs/ref/mixer.html for detailed information.
+	- SampleRate: The sample rate youre samples are recorded with. (defaults to 22050). It is highly reccomended to use 22050 Hz as samplerate. Works fine also with 44.1K samples but allowes a buffersize of 1 instead of 512. 
+	- BitDepth: The bit depth youre samples are recorded with (defaults to -16)
+	- Channels: The number of channels in your samples (1 = mono, 2 = stereo)
+	- BufferSize: Number of samples sent to the OS at once. Lower number gives lower latency (the time between you trigger and hear the sound) but can lead to dropouts.
 - ReadySound: a Sample that is played when the system is ready (usefull if you have no display)
 
 A song configration has following attributes:
-- MutedSounds: Samples for Button 0-5
-- OpenSounds: Samples for Button 0-5
+- MutedSounds: Path to OGG-files with the open samples for Button 0-5
+- OpenSounds: Path to OGG-files with the muted samples for Button 0-5
 - LoadSound: a Sound that is played when the song is selected
 
 Of cource using open/muted sounds is not a dogma. It can also be used to have more different sounds in a song.
@@ -72,9 +71,9 @@ Roadmap
 - Configuration via XML
 - Support of bluetooth controllers
 - Create a "headless" raspbian installation, that automatically starts GuitarPyPi after boot.
+- Configure a background track for each song for playing along
 
 *Later:*
-- Configure a background track for each song for playing along
 - A display connected to the Pi's GPIO
 - Do something with the other buttons/tremolo
 - ...
