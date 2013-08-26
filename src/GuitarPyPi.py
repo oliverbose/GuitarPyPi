@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import pygame
+import Config
+from pprint import pprint
 from pygame.locals import *
 
 NO_BUTTON_CHORD = 0
@@ -22,49 +24,16 @@ def main():
     guitar = pygame.joystick.Joystick(0)
     guitar.init()
 
+    # load config
+    config = Config.Config()
+    config.loadSongConfig()
+
+    songs = config.getSongs()
+    pprint(songs)
+    
+
+    # init status
     currentSong = 0
-
-    songs = { 0: {
-
-           "startSound" : pygame.mixer.Sound("../audio/ruelps.ogg"),\
-
-    	    # map the sounds to the buttons. To be moved to config.
-	    "chordsOpen": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
-                 1: pygame.mixer.Sound("../audio/G-open.ogg"),\
-                 2: pygame.mixer.Sound("../audio/A-open.ogg"),\
-                 3: pygame.mixer.Sound("../audio/C-open.ogg"),\
-                 4: pygame.mixer.Sound("../audio/D-open.ogg"),\
-                 5: pygame.mixer.Sound("../audio/E8-open.ogg")},\
-
-            "chordsMuted": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
-                 1: pygame.mixer.Sound("../audio/G-muted.ogg"),\
-                 2: pygame.mixer.Sound("../audio/A-muted.ogg"),\
-                 3: pygame.mixer.Sound("../audio/C-muted.ogg"),\
-                 4: pygame.mixer.Sound("../audio/D-muted.ogg"),\
-                 5: pygame.mixer.Sound("../audio/E8-muted.ogg")}
-                 
-		},\
-	       1: {
-           "startSound" : pygame.mixer.Sound("../audio/ruelps2.ogg"),\
-
-    	    # map the sounds to the buttons. To be moved to config.
-	    "chordsOpen": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
-                 1: pygame.mixer.Sound("../audio/D-open.ogg"),\
-                 2: pygame.mixer.Sound("../audio/F-open.ogg"),\
-                 3: pygame.mixer.Sound("../audio/G-open.ogg"),\
-                 4: pygame.mixer.Sound("../audio/A-open.ogg"),\
-                 5: pygame.mixer.Sound("../audio/empty.ogg")},\
-
-            "chordsMuted": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
-                 1: pygame.mixer.Sound("../audio/D-muted.ogg"),\
-                 2: pygame.mixer.Sound("../audio/F-muted.ogg"),\
-                 3: pygame.mixer.Sound("../audio/G-muted.ogg"),\
-                 4: pygame.mixer.Sound("../audio/A-muted.ogg"),\
-                 5: pygame.mixer.Sound("../audio/empty.ogg")}
-                 
-		}
-	}
-
     chordsToPlay = [NO_BUTTON_CHORD]
     playOpen = True
     playing = False
@@ -112,7 +81,7 @@ def nextSong():
         currentSong = 0
     else:
         currentSong = currentSong + 1
-    songs[currentSong]["startSound"].play()
+    songs[songs.keys()[currentSong]].getInitSound().play()
     
 	
 
@@ -160,8 +129,12 @@ def stopChord(chord):
     if (chord > 5):
         return
 
-    songs[currentSong]["chordsOpen"][chord].stop()
-    songs[currentSong]["chordsMuted"][chord].stop()
+    getCurrentSong().getChord(chord)["down"].stop()
+    getCurrentSong().getChord(chord)["up"].stop()
+
+def getCurrentSong():
+    global songs, currentSong
+    return songs[songs.keys()[currentSong]]
 
 # plays a single chord when the trigger is active 
 def playChord(chord):
@@ -175,9 +148,9 @@ def playChord(chord):
         stopChord(NO_BUTTON_CHORD)
         
     if (playing and playOpen):
-        songs[currentSong]["chordsOpen"][chord].play()
+        getCurrentSong().getChord(chord)["down"].play()
     if (playing and not playOpen):
-        songs[currentSong]["chordsMuted"][chord].play()
+        getCurrentSong().getChord(chord)["up"].play()
     
 # plays chords from the active chords list using the open chords samples
 def playOpenChords():
