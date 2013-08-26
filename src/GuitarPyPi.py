@@ -5,7 +5,7 @@ from pygame.locals import *
 NO_BUTTON_CHORD = 0
 
 def main():
-    global guitar, chordsOpen, chordsMuted, chordsToPlay, playing, playOpen
+    global guitar, chordsOpen, chordsMuted, chordsToPlay, playing, playOpen, songs, currentSong
 
     print "Initialization start..."
 
@@ -15,27 +15,56 @@ def main():
     pygame.mixer.pre_init(22050,-16,1,1)
     pygame.init()
     pygame.joystick.init()
+ #   pygame.display.quit()
     # we do not need this event which is thrown permanently by the guitar
     pygame.event.set_blocked(JOYAXISMOTION)
 
     guitar = pygame.joystick.Joystick(0)
     guitar.init()
 
-    # map the sounds to the buttons. To be moved to config.
-    chordsOpen = { 0: pygame.mixer.Sound("../audio/E-open.ogg"),\
+    currentSong = 0
+
+    songs = { 0: {
+
+           "startSound" : pygame.mixer.Sound("../audio/ruelps.ogg"),\
+
+    	    # map the sounds to the buttons. To be moved to config.
+	    "chordsOpen": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
                  1: pygame.mixer.Sound("../audio/G-open.ogg"),\
                  2: pygame.mixer.Sound("../audio/A-open.ogg"),\
                  3: pygame.mixer.Sound("../audio/C-open.ogg"),\
                  4: pygame.mixer.Sound("../audio/D-open.ogg"),\
-                 5: pygame.mixer.Sound("../audio/E8-open.ogg")}
+                 5: pygame.mixer.Sound("../audio/E8-open.ogg")},\
 
-    chordsMuted = {0: pygame.mixer.Sound("../audio/E-muted.ogg"),\
+            "chordsMuted": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
                  1: pygame.mixer.Sound("../audio/G-muted.ogg"),\
                  2: pygame.mixer.Sound("../audio/A-muted.ogg"),\
                  3: pygame.mixer.Sound("../audio/C-muted.ogg"),\
                  4: pygame.mixer.Sound("../audio/D-muted.ogg"),\
                  5: pygame.mixer.Sound("../audio/E8-muted.ogg")}
                  
+		},\
+	       1: {
+           "startSound" : pygame.mixer.Sound("../audio/ruelps2.ogg"),\
+
+    	    # map the sounds to the buttons. To be moved to config.
+	    "chordsOpen": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
+                 1: pygame.mixer.Sound("../audio/D-open.ogg"),\
+                 2: pygame.mixer.Sound("../audio/F-open.ogg"),\
+                 3: pygame.mixer.Sound("../audio/G-open.ogg"),\
+                 4: pygame.mixer.Sound("../audio/A-open.ogg"),\
+                 5: pygame.mixer.Sound("../audio/empty.ogg")},\
+
+            "chordsMuted": { 0: pygame.mixer.Sound("../audio/empty.ogg"),\
+                 1: pygame.mixer.Sound("../audio/D-muted.ogg"),\
+                 2: pygame.mixer.Sound("../audio/F-muted.ogg"),\
+                 3: pygame.mixer.Sound("../audio/G-muted.ogg"),\
+                 4: pygame.mixer.Sound("../audio/A-muted.ogg"),\
+                 5: pygame.mixer.Sound("../audio/empty.ogg")}
+                 
+		}
+	}
+
     chordsToPlay = [NO_BUTTON_CHORD]
     playOpen = True
     playing = False
@@ -74,6 +103,18 @@ def handleTrigger(event):
         playOpenChords()
     elif event.value == (0,1):
         playMutedChords()
+    elif event.value == (1,0):
+        nextSong()
+
+def nextSong():
+    global currentSong
+    if currentSong == len(songs)-1:
+        currentSong = 0
+    else:
+        currentSong = currentSong + 1
+    songs[currentSong]["startSound"].play()
+    
+	
 
 # Handler if a button has been pushed.
 # Adds the selected chord to the list of actice chords.
@@ -82,7 +123,11 @@ def handleTrigger(event):
 def handleButtonDown(event):
     global chordsToPlay
     chord = getChord(event.button)
+    if (chord > 5):
+        return
+
     chordsToPlay.append(chord)
+
     if (NO_BUTTON_CHORD in chordsToPlay):
         chordsToPlay.remove(NO_BUTTON_CHORD)
         stopChord(NO_BUTTON_CHORD)
@@ -95,6 +140,9 @@ def handleButtonDown(event):
 def handleButtonUp(event):
     global chordsToPlay
     chord = getChord(event.button)
+    if (chord > 5):
+        return
+
     chordsToPlay.remove(chord)
     if (noButtonPresed()):
         chordsToPlay.append(NO_BUTTON_CHORD)
@@ -109,21 +157,27 @@ def stopAll():
 
 # stops a single chord    
 def stopChord(chord):
-    chordsOpen[chord].stop()
-    chordsMuted[chord].stop()
+    if (chord > 5):
+        return
+
+    songs[currentSong]["chordsOpen"][chord].stop()
+    songs[currentSong]["chordsMuted"][chord].stop()
 
 # plays a single chord when the trigger is active 
 def playChord(chord):
-    global playOpen, playing, chordsMuted, chordsOpen
+    global playOpen, playing, chordsMuted, chordsOpen, songs, currentSong
+
+    if (chord > 5):
+        return
 
     # as soon as anyother chord than the NO_BUTTON_CHORD is played stop it, otherwise it may be heard chortly when changing a chord
     if (chord > NO_BUTTON_CHORD):
         stopChord(NO_BUTTON_CHORD)
         
     if (playing and playOpen):
-        chordsOpen[chord].play()
+        songs[currentSong]["chordsOpen"][chord].play()
     if (playing and not playOpen):
-        chordsMuted[chord].play()
+        songs[currentSong]["chordsMuted"][chord].play()
     
 # plays chords from the active chords list using the open chords samples
 def playOpenChords():
@@ -143,7 +197,21 @@ def playMutedChords():
         playChord(chord)
     playing = True
 
+
+
 # Helper that equalizes the turner between button 2 and 3
+
+# Rockband USB Guitar
+#def getChord(buttonId):
+#    if (buttonId == 5):
+#	return 42
+#    if (buttonId == 0):
+#        return 4
+#    if (buttonId == 4):
+#        return 5
+#    return buttonId
+
+# Guitar Hero USB Guitar
 def getChord(buttonId):
     if (buttonId == 2):
         return buttonId + 2
