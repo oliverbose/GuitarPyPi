@@ -1,9 +1,25 @@
 #!/usr/bin/python
 import pygame
 import xml.etree.ElementTree as ET
+from os import listdir
 
 
 class Song:
+
+    def __init__(self,tree):
+        chords = {}
+        root = tree.getroot()
+        self.setId(root.attrib["id"])
+        self.setName(root.attrib["name"])
+        self.setInitSound(pygame.mixer.Sound(root.attrib["initSound"]))
+        for chordEl in root.iter('chord'):
+            sounds = {}
+            for soundEl in chordEl.iter('sound'):
+                sounds[soundEl.attrib["id"]] = pygame.mixer.Sound(soundEl.attrib["file"])
+            
+            chords[int(chordEl.attrib["id"])] = sounds
+        
+        self.setChords(chords)
 
     def getInitSound(self):
         return self.initSound
@@ -18,12 +34,12 @@ class Song:
         self.chords = chords
         
     def getId(self):
-        return self.id
+        return self.anId
 
-    def setId(self,id):
-        self.id = id
+    def setId(self,anId):
+        self.anId = anId
 
-    def getName(name):
+    def getName(self,name):
         return self.name
 
     def setName(self,name):
@@ -35,23 +51,13 @@ class Config:
         self.songs = {}
 
     def loadSongConfig(self):
-        tree = ET.parse('../songs/test1.song')
-        chords = {}
-        song = Song()
-        root = tree.getroot()
-        song.setId(root.attrib["id"])
-        song.setName(root.attrib["name"])
-        song.setInitSound(pygame.mixer.Sound(root.attrib["initSound"]))
-        for chordEl in root.iter('chord'):
-            sounds = {}
-            for soundEl in chordEl.iter('sound'):
-                sounds[soundEl.attrib["id"]] =  pygame.mixer.Sound(soundEl.attrib["file"])
-
-            chords[int(chordEl.attrib["id"])] = sounds 
-        song.setChords(chords)
-        self.songs[song.getId()] = song
+        filelist = listdir("../songs");
+        for songfile in filelist:
+            if songfile.endswith("song"):
+                tree = ET.parse("../songs/" + songfile)
+                song = Song(tree)
+                self.songs[song.getId()] = song
         
-
     def getSongs(self):
         return self.songs
     
