@@ -10,6 +10,30 @@ def main():
     global guitar, chordsOpen, chordsMuted, chordsToPlay, playing, playOpen, songs, currentSong
 
     print "Initialization start..."
+    
+	
+	# Add some Halloween Eye-Candy    
+	print "              (                                ("
+	print "                )           )        (                   )"
+	print "              (                       )      )            .---."
+	print "          )              (     .-\"\"-.       (        (   /     \\"
+	print "         ( .-\"\"-.  (      )   / _  _ \        )       )  |() ()|"
+	print "          / _  _ \   )        |(_\/_)|  .---.   (        (_ 0 _)"
+	print "          |(_)(_)|  ( .---.   (_ /\ _) /     \    .-\"\"-.  |xxx|"
+	print "          (_ /\ _)   /     \   |v==v|  |<\ />|   / _  _ \ '---'"
+	print "           |wwww|    |(\ /)|(  '-..-'  (_ A _)   |/_)(_\|"
+	print "           '-..-'    (_ o _)  )  .---.  |===|    (_ /\ _)"
+	print "                      |===|  (  /     \ '---'     |mmmm|"
+	print "                      '---'     |{\ /}|           '-..-'"
+	print "                                (_ V _)"
+	print "                                 |\"\"\"|"
+	print "                                 '---'"
+	print "                                 "
+	print "                                 "
+	print "               .  .              .  .   ..                  "
+	print "               |__| _.._ ._   .  |__| _.|| _ .    , _  _ ._ "
+	print "               |  |(_][_)[_)\_|  |  |(_]||(_) \/\/ (/,(/,[ )"
+	print "                      |  |  ._| "
 
     # We need to reduce the default buffer size to have low latency.
     # It is highly reccomended to use 22050 Hz as samplerate. Works fine also with 44.1K samples
